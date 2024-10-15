@@ -1,4 +1,9 @@
-// Map.hpp
+/* Author: Stevie Cervantes
+ * Created: July 25, 2024
+ * File Name: Map.hpp
+ * Description: Contains the code to create the map as well as
+ * 				the different functions to for printing maps.
+*/
 
 #include <cmath>
 #include <iomanip>
@@ -8,6 +13,7 @@
 
 using namespace std;
 
+// Map Class Definition
 class Map{
 	int** raw_map;
 	char** polished_map;
@@ -35,14 +41,17 @@ class Map{
 		
 };
 
+// Map Constructor
 Map::Map(string fileName){
 	this->fileName = fileName;
 	
+	// Console print out solors
 	cout << termcolor::bold << termcolor::on_green << termcolor::white;
 	
 	// Welcome Message
 	cout << "Welcome to Stevie's for fun Terraformer!!\n" << endl;
 	
+	// Console print out colors
 	cout << termcolor::white;
 	
 	// Take in Seed
@@ -87,11 +96,15 @@ Map::Map(string fileName){
 	cin >> numDirtballs;
 }
 
+// Map deconstructor
 Map::~Map(){
 	delete raw_map;
 	delete polished_map;
 }
 
+/* Drop the "dirtballs". Randomly drops dirtballs with a set radius.
+ * This is what really builds the shape of our map
+*/
 void Map::DropDirtball(){	
 	srand(testSeed);
 	int centerX;
@@ -122,6 +135,10 @@ void Map::DropDirtball(){
 	}
 }
 
+/* Normalizing the island means we divide each element in the map
+ * by the highest value and multiple the value by 255 to get values
+ * between 0 and 255 for each point.
+*/
 void Map::NormalizeIsland(){
 	float highestValue = this->raw_map[0][0];
 	
@@ -142,6 +159,13 @@ void Map::NormalizeIsland(){
 	}
 }
 
+/*  PolishedIsland function determines the waterline, different land
+ *  height calculations, and takes those values to create the polished
+ *  map. The polished map translates each value on the raw map to symbols
+ *  that represent different biomes like desert(.), grass fields(-), forrests
+ * 	(*), and mountains(^). For values less that the waterline, there are symbols
+ *  for deep water(#) and shallow water(~).
+*/
 void Map::PolishedIsland(){	
 	// Water Calculations
 	int halfWaterline = waterLine / 2;
@@ -163,14 +187,14 @@ void Map::PolishedIsland(){
 			// <= waterline
 			if(this->raw_map[i][j] < halfWaterline){
 				this->polished_map[i][j] = '#';
-			}else if(this->raw_map[i][j] >= halfWaterline and this->raw_map[i][j] <= waterLine){
+			}else if(this->raw_map[i][j] >= halfWaterline && this->raw_map[i][j] <= waterLine){
 				this->polished_map[i][j] = '~';
 			}else{ // >waterline
 				if(this->raw_map[i][j] < (waterLine + fifteenPercLand)){
 					this->polished_map[i][j] = '.';
-				}else if(this->raw_map[i][j] >= (waterLine + fifteenPercLand) and this->raw_map[i][j] < (waterLine + fortyPercLand)){
+				}else if(this->raw_map[i][j] >= (waterLine + fifteenPercLand) && this->raw_map[i][j] < (waterLine + fortyPercLand)){
 					this->polished_map[i][j] = '-';
-				}else if(this->raw_map[i][j] >= (waterLine + fortyPercLand) and this->raw_map[i][j] < (waterLine + eightyPercLand)){
+				}else if(this->raw_map[i][j] >= (waterLine + fortyPercLand) && this->raw_map[i][j] < (waterLine + eightyPercLand)){
 					this->polished_map[i][j] = '*';
 				}else{
 					this->polished_map[i][j] = '^';
@@ -180,6 +204,7 @@ void Map::PolishedIsland(){
 	}	
 }
 
+// Print the map that contains the integer values
 void Map::PrintRawMap(){
 	for(int i = 0; i < this->height; i++){
 		for(int j = 0; j < this->width; j++){
@@ -189,6 +214,7 @@ void Map::PrintRawMap(){
 	}
 }
 
+// Print the map with the symbols
 void Map::PrintPolishedMap(){
 	BMP OutPolishedMap;
 	OutPolishedMap.SetSize(width, height);
@@ -203,11 +229,16 @@ void Map::PrintPolishedMap(){
 	cout << termcolor::reset;
 }
 
+// Creates a bmp with color values for each symbol in the
+// polished map
 void Map::PrintPolishedBitMap(){
+	// Creates the bitmap class from EasyBMP files
 	BMP OutPolishedMap;
 	OutPolishedMap.SetSize(width, height);
 	OutPolishedMap.SetBitDepth(32);
 	
+	// Iterates through the symboles from the polished map
+	// and prints a color at the polished map symbol in the bitmap
 	for(int i = 0; i < this->height; i++){
 		for(int j = 0; j < this->width; j++){
 			// Setting color
@@ -242,6 +273,8 @@ void Map::PrintPolishedBitMap(){
 	OutPolishedMap.WriteToFile("PolishedMap.bmp");
 }
 
+// Prints colored map to console
+// Uses symbols to determine color
 void Map::SetTermColor(char currChar){
 	// Setting color
 	if(currChar == '#'){
