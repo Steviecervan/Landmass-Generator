@@ -1,3 +1,13 @@
+/* Author: Stevie Cervantes
+ * Created: July 25, 2024
+ * File Name: cervantes_stevie_h3.hpp
+ * Description: Contains the driver code for the project. Creates
+ * 				a map, drops dirtballs, normalizes values, and 
+ * 				polishes island with symbols, then creates a bitmap
+ * 				with the colored map. Changing the printing function
+ * 				will result in different output.
+*/
+
 #include "Map.hpp"
 #include <fstream>
 using namespace std;
